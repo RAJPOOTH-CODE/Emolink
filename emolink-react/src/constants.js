@@ -22,5 +22,21 @@ export const TEMPLATES = {
         music: 'soft',
         color: 'text-blue-600',
         description: 'Say sorry from the heart'
+    },
+    graduation: {
+        bg: 'from-blue-600 via-indigo-600 to-purple-600',
+        emoji: '🎓',
+        title: 'Happy Graduation!',
+        music: 'happy',
+        color: 'text-blue-600',
+        description: 'Celebrate a huge milestone'
+    },
+    anniversary: {
+        bg: 'from-red-400 via-pink-500 to-purple-500',
+        emoji: '🍷',
+        title: 'Happy Anniversary!',
+        music: 'romantic',
+        color: 'text-red-600',
+        description: 'Toast to your beautiful journey'
     }
 };

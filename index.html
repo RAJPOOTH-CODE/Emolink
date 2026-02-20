@@ -329,11 +329,16 @@
                 timestamp: Date.now()
             };
 
-            // Unicode-safe Base64 encoding
+            // Unicode-safe Base64URL encoding
             const jsonString = JSON.stringify(data);
             const uint8Array = new TextEncoder().encode(jsonString);
             const binString = Array.from(uint8Array, (byte) => String.fromCodePoint(byte)).join("");
-            const encoded = btoa(binString);
+            
+            // Convert to Base64 and then to Base64URL
+            const encoded = btoa(binString)
+                .replace(/\+/g, '-')
+                .replace(/\//g, '_')
+                .replace(/=+$/, '');
 
             const url = `${window.location.origin}${window.location.pathname}?card=${encoded}`;
 
@@ -367,12 +372,18 @@
         // Check if viewing a card
         window.onload = function () {
             const params = new URLSearchParams(window.location.search);
-            const cardData = params.get('card');
+            let cardData = params.get('card');
 
             if (cardData) {
                 try {
+                    // Convert Base64URL back to standard Base64
+                    let base64 = cardData.replace(/-/g, '+').replace(/_/g, '/');
+                    while (base64.length % 4) {
+                        base64 += '=';
+                    }
+                    
                     // Unicode-safe Base64 decoding
-                    const binString = atob(cardData);
+                    const binString = atob(base64);
                     const uint8Array = Uint8Array.from(binString, (m) => m.codePointAt(0));
                     const jsonString = new TextDecoder().decode(uint8Array);
                     const data = JSON.parse(jsonString);

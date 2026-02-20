@@ -5,9 +5,9 @@ import { RefreshCcw, Heart } from 'lucide-react';
 import { TEMPLATES } from '../constants';
 import { playTone, playBackgroundMusic } from '../utils/audio';
 
-const ReceiverView = ({ data, onReplay }) => {
+const ReceiverView = ({ data, onReplay, isPreview = false }) => {
     const [count, setCount] = useState(10);
-    const [phase, setPhase] = useState('countdown');
+    const [phase, setPhase] = useState('initial'); // 'initial', 'countdown', 'reveal'
     const template = TEMPLATES[data.template] || TEMPLATES.birthday;
 
     useEffect(() => {
@@ -25,6 +25,12 @@ const ReceiverView = ({ data, onReplay }) => {
             }
         }
     }, [count, phase, template.music]);
+
+    const startExperience = () => {
+        // Initialize audio context
+        playTone(0, 0.01);
+        setPhase('countdown');
+    };
 
     const triggerEffects = () => {
         const duration = 5 * 1000;
@@ -56,7 +62,10 @@ const ReceiverView = ({ data, onReplay }) => {
 
         if (data.template === 'birthday' || data.template === 'proposal') {
             const heartInterval = setInterval(() => {
-                if (Date.now() > animationEnd) return clearInterval(heartInterval);
+                if (Date.now() > animationEnd) {
+                    clearInterval(heartInterval);
+                    return;
+                }
                 createHeart();
             }, 300);
         }
@@ -92,7 +101,33 @@ const ReceiverView = ({ data, onReplay }) => {
             </div>
 
             <AnimatePresence mode="wait">
-                {phase === 'countdown' ? (
+                {phase === 'initial' ? (
+                    <motion.div
+                        key="initial"
+                        initial={{ opacity: 0, scale: 0.9 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 1.1 }}
+                        className="text-center z-10"
+                    >
+                        <motion.div
+                            animate={{ scale: [1, 1.05, 1] }}
+                            transition={{ repeat: Infinity, duration: 2 }}
+                            className="text-9xl mb-12 shadow-2xl rounded-full bg-white/5 p-8 inline-block"
+                        >
+                            📦
+                        </motion.div>
+                        <h2 className="text-4xl md:text-5xl font-bold mb-8 text-white">
+                            A surprise is waiting for you!
+                        </h2>
+                        <button
+                            onClick={startExperience}
+                            className="bg-gradient-to-r from-yellow-400 to-orange-500 text-purple-900 font-bold py-6 px-12 rounded-3xl text-2xl shadow-[0_0_50px_rgba(250,204,21,0.4)] hover:scale-105 transition-all flex items-center gap-4 mx-auto"
+                        >
+                            <Heart className="w-8 h-8 fill-current" />
+                            Open Surprise
+                        </button>
+                    </motion.div>
+                ) : phase === 'countdown' ? (
                     <motion.div
                         key="countdown"
                         initial={{ opacity: 0, scale: 0.5 }}
