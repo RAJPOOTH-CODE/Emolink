@@ -1,0 +1,10 @@
+{
+    "name": "emolink-root",
+    "private": true,
+    "scripts": {
+        "dev": "npm run dev --prefix emolink-react",
+        "build": "npm run build --prefix emolink-react",
+        "lint": "npm run lint --prefix emolink-react",
+        "preview": "npm run preview --prefix emolink-react"
+    }
+}
